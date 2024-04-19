@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 // set ejs as view engine
 app.set("view engine", "ejs");
@@ -23,18 +24,23 @@ app.get("/", (req, res) => {
     res.render("logIn.ejs");
 });
 
-app.get("/loggedin", async(req, res) => {
-    let { email, password } = req.query;
-    console.log(email + " " + password);
-    let user = await User.findOne({ email });
-    if (!user) {
-        return res.status(404).send("User not found");
+app.post("/login", async(req, res) => {
+    // let { email, password } = req.body;
+    console.log(req.body.email + " " + req.body.password);
+    try {
+        let user = await User.findOne({ email: req.body.email });
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+        const isMatch = await bcrypt.compare(req.body.password, user.password);
+        if (!isMatch) {
+            return res.status(401).send("Invalid Password");
+        }
+        res.send("You are successfully logged in");
+    } catch {
+        res.send("wrong details");
     }
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-        return res.status(401).send("Invalid Password");
-    }
-    res.send("You are successfully logged in");
+
 });
 
 app.get("/register", (req, res) => {
@@ -42,7 +48,7 @@ app.get("/register", (req, res) => {
 });
 app.post("/registered", async(req, res) => {
     let { email, age, password, location, details } = req.body;
-    const existingUser = User.findOne({ email: email });
+    const existingUser = await User.findOne({ email: req.body.email });
     if (existingUser) {
         console.log("Email in use");
         res.send("User already exist with that email address");
@@ -51,7 +57,7 @@ app.post("/registered", async(req, res) => {
 
         // hashing of password
         const saltRounds = 7;
-        const hashedpass = bcrypt(newUser.password, saltRounds);
+        const hashedpass = await bcrypt.hash(newUser.password, saltRounds);
         newUser.password = hashedpass;
 
         await newUser.save();
