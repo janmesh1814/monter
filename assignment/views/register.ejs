@@ -10,20 +10,25 @@
 <body>
     <div class="form">
         <h2>Register</h2>
-        <form action="">
+        <form action="/registered" method="post">
             <label for="email">Enter email : </label>
-            <input type="text" name="" id="email" placeholder="Enter your email">
-            <br><br>
-            <label for="password">Enter password : </label>
-            <input type="password" name="" id="password" placeholder="Enter password">
+            <input type="email" name="email" id="email" placeholder="Enter your email">
             <br><br>
 
-            <label for="location">Enter password : </label>
-            <input type="text" name="" id="location" placeholder="Enter your location">
+            <label for="age">Enter Age : </label>
+            <input type="number" name="age" id="age" placeholder="Enter age">
+            <br><br>
+
+            <label for="password">Enter password : </label>
+            <input type="password" name="password" id="password" placeholder="Enter password">
+            <br><br>
+
+            <label for="location">Enter Location : </label>
+            <input type="text" name="location" id="location" placeholder="Enter your location">
             <br><br>
 
             <label for="details">Enter Work details : </label>
-            <textarea name="" id="details" cols="30" rows="10" placeholder="Enter your work details: "></textarea>
+            <textarea name="details" id="details" cols="30" rows="10" placeholder="Enter your work details: "></textarea>
             <br><br>
             <button>Register</button>
         </form>
