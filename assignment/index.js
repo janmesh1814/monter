@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt');
 const nodemailer = require("nodemailer");
 const otpGenerator = require("otp-generator");
 const sendOTP = require('./views/sendOTP.js');
+const jwt = require('jsonwebtoken');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -104,37 +105,15 @@ app.post("/login", async(req, res) => {
             return res.status(401).send("Invalid Password");
         }
 
-        // Generate JWT token
-        const token = jwt.sign({ userId: user._id }, 'your_secret_key', { expiresIn: '1h' });
-        res.json({ token });
-
+        const token = jwt.sign({ email: user.email }, 'your_secret_key', { expiresIn: '1h' });
+        // res.json({ token });
+        console.log(token);
         res.render("home.ejs");
     } catch {
         res.send("wrong details");
     }
 
 });
-
-// Protected route
-app.get("/protected", authenticateToken, (req, res) => {
-    res.send("You have accessed a protected route!");
-});
-
-// Middleware to authenticate JWT token
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (token == null) {
-        return res.status(401).send("Token is missing");
-    }
-    jwt.verify(token, 'your_secret_key', (err, user) => {
-        if (err) {
-            return res.status(403).send("Invalid token");
-        }
-        req.user = user;
-        next();
-    });
-}
 
 app.listen(8080, () => {
     console.log("Listening to port 8080");
