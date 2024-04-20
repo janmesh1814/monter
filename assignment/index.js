@@ -29,6 +29,28 @@ app.get("/", (req, res) => {
     res.render("register.ejs");
 });
 
+// Function to check OTP validity at regular intervals
+const checkOTPValidity = async() => {
+    try {
+        // Find all users who have requested OTP
+        const users = await User.find({ otp: { $exists: true, $ne: null } });
+        for (const user of users) {
+            // Check if OTP is expired
+            if (user.otpExpiry && user.otpExpiry < Date.now()) {
+                // OTP expired, remove OTP from user document
+                user.otp = null;
+                user.otpExpiry = null;
+                await user.save();
+                console.log(`OTP expired for user with email: ${user.email}`);
+                res.send("OTP destroyed");
+            }
+        }
+    } catch (error) {
+        console.error("Error checking OTP validity:", error);
+    }
+};
+
+
 // otp validation
 app.post("/registered", async(req, res) => {
     let { email, password } = req.body;
@@ -45,12 +67,20 @@ app.post("/registered", async(req, res) => {
         newUser.password = hashedpass;
 
         // otp generation
+        // const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets: false });
+        // newUser.otp = otp;
         const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets: false });
+        const otpExpiry = Date.now() + (60 * 1000); // OTP expires in 1 minutes
         newUser.otp = otp;
+        newUser.otpExpiry = otpExpiry;
+
         await newUser.save();
         await sendOTP(email, otp);
         console.log(newUser);
         res.render("otp.ejs", { email });
+
+        // Set interval to run checkOTPValidity every minute (adjust interval as needed)
+        setInterval(checkOTPValidity, 1000);
     }
 });
 

@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
         default: false
     },
 
+    otpExpiry: {
+        type: Date,
+        default: null
+    },
+
     location: {
 
     },
