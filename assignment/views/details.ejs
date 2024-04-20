@@ -4,36 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Details</title>
 </head>
 
 <body>
     <div class="form">
         <h2>Register</h2>
-        <form action="/registered" method="post">
-            <label for="email">Enter email : </label>
-            <input type="email" name="email" id="email" placeholder="Enter your email">
+        <form action="/home" method="post">
+            <label for="age">Your email : </label>
+            <input type="text" name="email" id="age" placeholder="Enter age" value=<%=email%>>
             <br><br>
 
-            <label for="password">Enter password : </label>
-            <input type="password" name="password" id="password" placeholder="Enter password">
-            <br><br>
-            <!-- 
-             
             <label for="age">Enter Age : </label>
             <input type="number" name="age" id="age" placeholder="Enter age">
             <br><br>
-            
+
             <label for="location">Enter Location : </label>
             <input type="text" name="location" id="location" placeholder="Enter your location">
             <br><br>
 
             <label for="details">Enter Work details : </label>
-            <textarea name="details" id="details" cols="30" rows="10" placeholder="Enter your work details: "></textarea> -->
+            <textarea name="details" id="details" cols="30" rows="10" placeholder="Enter your work details: "></textarea>
             <br><br>
             <button>Register</button>
         </form>
-        <p>Already have account? <a href="/logIn">login</a> </p>
     </div>
 </body>
 
